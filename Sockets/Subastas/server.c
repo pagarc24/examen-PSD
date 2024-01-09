@@ -52,7 +52,7 @@ int main(int argc, char *argv[]){
     int winner;
     int code;
     
-    char* description = "Batidora con la cara de Messi";
+    tString description = "Batidora con la cara de Messi";
     int prize = 100;
 
     socketfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -86,7 +86,8 @@ int main(int argc, char *argv[]){
     recv(socket_client2, p2, STRING_LENGTH-1, 0);
     printf("Jug2: %s\n", p2);
 
-    msgLength = strlen(description)-1;
+    //msgLength = strlen(description)-1;
+    msgLength = strlen(description);
     
     send(socket_client1, &msgLength, sizeof(msgLength), 0);
     send(socket_client1, &description, msgLength, 0);

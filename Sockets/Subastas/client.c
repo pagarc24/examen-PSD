@@ -49,7 +49,8 @@ int main(int argc, char *argv[]){
     int socketfd, port, code, finExec = FALSE, msgLength;
     struct sockaddr_in server_add;
     char* serverIP;
-    char* playerName;
+    //char* playerName;
+    tString playerName;
 
     serverIP = argv[1];
     port = atoi(argv[2]);
@@ -73,10 +74,11 @@ int main(int argc, char *argv[]){
                 fgets(playerName, STRING_LENGTH - 1, stdin);
                 playerName[strlen(playerName)-1]=0;
 
-                msgLength = strlen(playerName)-1;
+                //msgLength = strlen(playerName)-1;
                 
-                send(socketfd, &playerName, msgLength, 0);
-
+                //send(socketfd, &playerName, msgLength, 0);
+                send(socketfd, playerName, strlen(playerName), 0);
+                
                 puja(socketfd);
                 break;
             case BID_WIN:
