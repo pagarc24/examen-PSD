@@ -74,14 +74,14 @@ int main(int argc, char *argv[])
   {
     threadArgs[n].client1_socketfd = accept(socketfd, (struct sockaddr *)&client1_add, &clientLength);
     threadArgs[n].client2_socketfd = accept(socketfd, (struct sockaddr *)&client2_add, &clientLength);
-    printf("Socket client1: %d\n", threadArgs[n].client1_socketfd);
-    printf("Socket client2: %d\n", threadArgs[n].client2_socketfd);
-    pthread_create(&threadID[n], NULL, threadTask, threadArgs);
+    printf("Socket client1: %d. Sala: %d\n", threadArgs[n].client1_socketfd, n);
+    printf("Socket client2: %d. Sala: %d\n", threadArgs[n].client2_socketfd, n);
+    pthread_create(&threadID[n], NULL, threadTask, &threadArgs[n]);
+    ++n;
   }
 
-  int decline_socket = accept(socketfd, (struct sockaddr*)&decline_add, &clientLength);
+  int decline_socket = accept(socketfd, (struct sockaddr *)&decline_add, &clientLength);
   send(decline_socket, SERVER_FULL, sizeof(SERVER_FULL), 0);
-
 
   for (int i = 0; i < n; ++i)
   {
@@ -97,7 +97,7 @@ void *threadTask(void *args)
   tSala sala;
   int winner, code;
   tString description = "Batidora con la cara de Messi";
-  int prize = 100;
+  int price = 100;
   tThreadArgs *threadArgs;
   int msgLength;
 
@@ -124,19 +124,19 @@ void *threadTask(void *args)
 
   send(sala.socket_client1, &msgLength, sizeof(msgLength), 0);
   send(sala.socket_client1, &description, msgLength, 0);
-  send(sala.socket_client1, &prize, sizeof(prize), 0);
+  send(sala.socket_client1, &price, sizeof(price), 0);
 
   send(sala.socket_client2, &msgLength, sizeof(msgLength), 0);
   send(sala.socket_client2, &description, msgLength, 0);
-  send(sala.socket_client2, &prize, sizeof(prize), 0);
+  send(sala.socket_client2, &price, sizeof(price), 0);
 
-  printf("\nRESULTADOS DE LA PUJA POR %s(%d)\n\n", description, prize);
+  printf("\nRESULTADOS DE LA PUJA POR %s(%d)\n\n", description, price);
   recv(sala.socket_client1, &sala.puja1, sizeof(sala.puja1), 0);
   printf("%s -> %d\n", sala.p1, sala.puja1);
   recv(sala.socket_client2, &sala.puja2, sizeof(sala.puja2), 0);
   printf("%s -> %d\n", sala.p2, sala.puja2);
 
-  winner = analisisDePujas(prize, sala.puja1, sala.puja2); // 0 si no gana nadie, 1 si gana p1, 2 si gana p2
+  winner = analisisDePujas(price, sala.puja1, sala.puja2); // 0 si no gana nadie, 1 si gana p1, 2 si gana p2
 
   if (winner == 0)
   {
@@ -164,119 +164,7 @@ void *threadTask(void *args)
   close(sala.socket_client2);
   pthread_exit(NULL);
 }
-/* ESTA VERSION PASA DE MI Y EJECUTA EL SERVER COMO SI FUESE UN PROGRAMA NORMAL
-int main(int argc, char *argv[])
-{
-  int socketfd, port;
-  struct sockaddr_in server_addr;
-  // tSala casa_subastas[MAX_ROOMS];
-  // tThreadArgs threadArgs[MAX_ROOMS];
-  // pthread_t threadID[MAX_ROOMS];
-  tSala sala1;
-  int code;
-  int winner;
-  struct sockaddr_in client_addr;
-  unsigned int clientAddrLength = sizeof(client_addr);
 
-  socketfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-  if (argc < 2)
-  {
-    fprintf(stderr, "ERROR wrong number of arguments\n");
-    fprintf(stderr, "Usage:\n$>%s port\n", argv[0]);
-    exit(1);
-  }
-
-  port = atoi(argv[1]);
-
-  memset(&server_addr, 0, sizeof(server_addr));
-  server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  server_addr.sin_family = AF_INET;
-  server_addr.sin_port = htons(port);
-
-  bind(socketfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
-
-  listen(socket, MAX_CONNECTIONS);
-
-  // Cuando se conecte un cliente
-
-  sala1.client1_socketfd = accept(socketfd, (struct sockaddr *)&client_addr, &clientAddrLength);
-  printf("Cliente 1 : [%d]\n", sala1.client1_socketfd);
-  sala1.client2_socketfd = accept(socketfd, (struct sockaddr *)&client_addr, &clientAddrLength);
-  printf("Cliente 2 : [%d]\n", sala1.client2_socketfd);
-
-  // Send CONNECTION_OK to both clients
-  send(sala1.client1_socketfd, CONNECTION_OK, sizeof(CONNECTION_OK), 0);
-  send(sala1.client2_socketfd, CONNECTION_OK, sizeof(CONNECTION_OK), 0);
-
-  // Recieve client1 name
-  memset(sala1.client1_name, 0, STRING_LENGTH);
-  recv(socketfd, sala1.client1_name, STRING_LENGTH - 1, 0);
-  printf("Cliente1: %s\n", sala1.client1_name);
-
-  // Recieve client2 name
-  memset(sala1.client2_name, 0, STRING_LENGTH);
-  recv(socketfd, sala1.client2_name, STRING_LENGTH - 1, 0);
-  printf("Cliente1: %s\n", sala1.client1_name);
-
-  // Send description to both clients
-  send(sala1.client1_socketfd, DESC, sizeof(DESC), 0);
-  send(sala1.client2_socketfd, DESC, sizeof(DESC), 0);
-  // Send cost to both clients
-  send(sala1.client1_socketfd, COST, sizeof(COST), 0);
-  send(sala1.client2_socketfd, COST, sizeof(COST), 0);
-
-  // Recieve client1 bid
-  recv(sala1.client1_socketfd, sala1.client1_bid, sizeof(sala1.client1_bid), 0);
-  // Recieve client2 bid
-  recv(sala1.client2_socketfd, sala1.client2_bid, sizeof(sala1.client2_bid), 0);
-
-  printf("\nRESULTADOS DE LA PUJA POR %s(%d)\n\n", DESC, COST);
-  recv(sala1.client1_socketfd, &sala1.client1_bid, sizeof(sala1.client1_bid), 0);
-  printf("%s -> %d\n", sala1.client1_name, sala1.client1_bid);
-  recv(sala1.client2_socketfd, &sala1.client2_bid, sizeof(sala1.client2_bid), 0);
-  printf("%s -> %d\n", sala1.client2_name, sala1.client2_bid);
-
-  winner = analisisDePujas(COST, sala1.client1_bid, sala1.client2_bid); // 0 si no gana nadie, 1 si gana p1, 2 si gana p2
-
-  if (winner == 0)
-  {
-    code = BID_LOSE;
-    send(sala1.client1_socketfd, &code, sizeof(code), 0);
-    send(sala1.client2_socketfd, &code, sizeof(code), 0);
-  }
-  else if (winner == 1)
-  {
-    code = BID_WIN;
-    send(sala1.client1_socketfd, &code, sizeof(code), 0);
-    code = BID_LOSE;
-    send(sala1.client2_socketfd, &code, sizeof(code), 0);
-  }
-  else if (winner == 2)
-  {
-    code = BID_LOSE;
-    send(sala1.client1_socketfd, &code, sizeof(code), 0);
-    code = BID_WIN;
-    send(sala1.client2_socketfd, &code, sizeof(code), 0);
-  }
-
-  unsigned int n = 0;
-  for (int i = 0; i < MAX_ROOMS; i++){
-
-      threadArgs[n].client1_socketfd = accept(socketfd, (struct sockaddr*) &client_add, &clientLength);
-      threadArgs[n].client2_socketfd = accept(socketfd, (struct sockaddr*) &client_add, &clientLength);
-      pthread_create(&threadID[n], NULL, threadFunc, &threadArgs[n]);
-      n++;
-
-  }
-  for (int i = 0; i < n; i++) {
-      pthread_join(threadID[i], NULL);
-  }
-
-
-  return 0;
-}
-*/
 int analisisDePujas(int price, int bid1, int bid2)
 {
   int winner;
