@@ -1,4 +1,6 @@
-all: cliente servidor
+luque: cliente servidorLuque
+
+pablo: cliente servidorPablo
 
 clean:
 	rm cliente servidor
@@ -7,5 +9,8 @@ clean:
 cliente: client.c
 	gcc -g -Wall client.c -o cliente
 
-servidor: serverLuque.c
-	gcc -g -Wall serverLuque.c -o servidor
+servidorPablo: serverPablo.c
+	gcc -g -Wall serverPablo.c -lpthread -o servidor
+	
+servidorLuque: serverLuque.c
+	gcc -g -Wall serverLuque.c -lpthread -o servidor
