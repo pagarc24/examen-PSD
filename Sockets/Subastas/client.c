@@ -46,8 +46,7 @@ void puja(int socketfd){
 }
 
 int main(int argc, char *argv[]){
-    int socketfd, port, code, finExec = FALSE;
-    //int msgLength;
+    int socketfd, port, code, finExec = FALSE, msgLength;
     struct sockaddr_in server_add;
     char* serverIP;
     //char* playerName;
@@ -90,6 +89,9 @@ int main(int argc, char *argv[]){
                 printf("\nPERDISTE LA PUJA\n");
                 finExec = TRUE;
                 break;
+            case SERVER_FULL:
+                printf("\nLo sentimos, el servidor está lleno\n");
+                finExec = TRUE;
             default: break;
             }
     }
