@@ -46,7 +46,8 @@ void puja(int socketfd){
 }
 
 int main(int argc, char *argv[]){
-    int socketfd, port, code, finExec = FALSE, msgLength;
+    int socketfd, port, code, finExec = FALSE;
+    //int msgLength;
     struct sockaddr_in server_add;
     char* serverIP;
     //char* playerName;

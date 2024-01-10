@@ -53,6 +53,7 @@ int main(int argc, char *argv[]){
     int code;
     
     tString description = "Batidora con la cara de Messi";
+
     int prize = 100;
 
     socketfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -88,7 +89,7 @@ int main(int argc, char *argv[]){
 
     //msgLength = strlen(description)-1;
     msgLength = strlen(description);
-    
+
     send(socket_client1, &msgLength, sizeof(msgLength), 0);
     send(socket_client1, &description, msgLength, 0);
     send(socket_client1, &prize, sizeof(prize), 0);
