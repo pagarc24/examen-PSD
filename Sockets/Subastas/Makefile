@@ -1,6 +1,6 @@
-luque: cliente servidorLuque
-
 pablo: cliente servidorPablo
+
+luque: cliente servidorLuque
 
 clean:
 	rm cliente servidor
