@@ -17,7 +17,7 @@
 /** Length for tString */
 #define STRING_LENGTH 128
 /** Type for names and object description */
-typedef char tString [STRING_LENGTH];
+typedef char tString[STRING_LENGTH];
 /** Maximum number of rooms */
 #define MAX_ROOMS 2
 /** Server Full */
@@ -30,7 +30,8 @@ typedef char tString [STRING_LENGTH];
 #define BID_LOSE 4000
 #define STRING_LENGTH 128
 
-void puja(int socketfd){
+void puja(int socketfd)
+{
     char description[STRING_LENGTH];
     int prize, msgLength, pujaUsuario;
 
@@ -45,11 +46,12 @@ void puja(int socketfd){
     send(socketfd, &pujaUsuario, sizeof(pujaUsuario), 0);
 }
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
     int socketfd, port, code, finExec = FALSE, msgLength;
     struct sockaddr_in server_add;
-    char* serverIP;
-    //char* playerName;
+    char *serverIP;
+    // char* playerName;
     tString playerName;
 
     serverIP = argv[1];
@@ -62,39 +64,44 @@ int main(int argc, char *argv[]){
     server_add.sin_family = AF_INET;
     server_add.sin_port = htons(port);
 
-    connect(socketfd, (struct sockaddr*) &server_add, sizeof(server_add));
+    connect(socketfd, (struct sockaddr *)&server_add, sizeof(server_add));
 
-    while(!finExec){
+    while (!finExec)
+    {
         recv(socketfd, &code, sizeof(code), 0);
-        
-        switch (code){
-            case CONNECTION_OK:
-                printf("Inserte su nombre: ");
-                memset(playerName, 0, STRING_LENGTH);
-                fgets(playerName, STRING_LENGTH - 1, stdin);
-                playerName[strlen(playerName)-1]=0;
 
-                //msgLength = strlen(playerName)-1;
-                
-                //send(socketfd, &playerName, msgLength, 0);
-                send(socketfd, playerName, strlen(playerName), 0);
-                
-                puja(socketfd);
-                break;
-            case BID_WIN:
-                printf("\nGANASTE LA PUJA\n");
-                finExec = TRUE;
-                break;
-            case BID_LOSE:
-                printf("\nPERDISTE LA PUJA\n");
-                finExec = TRUE;
-                break;
-            case SERVER_FULL:
-                printf("\nLo sentimos, el servidor está lleno\n");
-                finExec = TRUE;
-            default: break;
-            }
+        switch (code)
+        {
+        case CONNECTION_OK:
+            printf("Inserte su nombre: ");
+            memset(playerName, 0, STRING_LENGTH);
+            fgets(playerName, STRING_LENGTH - 1, stdin);
+            playerName[strlen(playerName) - 1] = 0;
+
+            // msgLength = strlen(playerName)-1;
+
+            // send(socketfd, &playerName, msgLength, 0);
+            send(socketfd, playerName, strlen(playerName), 0);
+
+            puja(socketfd);
+            break;
+        case BID_WIN:
+            printf("\nGANASTE LA PUJA\n");
+            finExec = TRUE;
+            break;
+        case BID_LOSE:
+            printf("\nPERDISTE LA PUJA\n");
+            finExec = TRUE;
+            break;
+        case SERVER_FULL:
+            printf("\nLo sentimos, el servidor está lleno\n");
+            finExec = TRUE;
+            break;
+        default:
+            printf("\nCodigo desconocido\n");
+            break;
+        }
     }
-    
+
     return 0;
 }

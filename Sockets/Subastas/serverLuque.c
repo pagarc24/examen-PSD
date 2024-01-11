@@ -43,6 +43,7 @@ typedef struct threadArgs
 {
   int client1_socketfd;
   int client2_socketfd;
+  int n_sala;
 } tThreadArgs;
 
 int analisisDePujas(int price, int bid1, int bid2);
@@ -86,6 +87,7 @@ int main(int argc, char *argv[])
   for (int i = 0; i < n; ++i)
   {
     pthread_join(threadID[i], NULL);
+    n--;
     exit(0);
   }
 
@@ -100,6 +102,7 @@ void *threadTask(void *args)
   int price = 100;
   tThreadArgs *threadArgs;
   int msgLength;
+  int n;
 
   // get thread args from args
   threadArgs = (tThreadArgs *)args;
