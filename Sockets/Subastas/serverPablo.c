@@ -176,7 +176,8 @@ int main(int argc, char *argv[]){
 
     for (int i=0; i < iSala; i++){
 		pthread_join(hilos[i], NULL);
-		exit(0);
+
+        //liberamos sala
         close(casino.sala[i].client1_socketfd);
         shutdown(casino.sala[i].client1_socketfd,2);
         casino.sala[i].client1_socketfd=-1;
@@ -184,6 +185,8 @@ int main(int argc, char *argv[]){
         shutdown(casino.sala[i].client2_socketfd,2);
         casino.sala[i].client2_socketfd=-1;
         conexiones-=2;
+        
+		exit(0);
 	}
 
     return 0;
