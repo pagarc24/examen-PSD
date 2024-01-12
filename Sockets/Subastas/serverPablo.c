@@ -111,6 +111,9 @@ void *logicaThread(void *args){
         send(socket_client2, &code, sizeof(code), 0);
     }
 
+    close(socket_client1);
+    close(socket_client2);
+
     return 0;
 
 }
@@ -178,12 +181,12 @@ int main(int argc, char *argv[]){
 		pthread_join(hilos[i], NULL);
 
         //liberamos sala
-        close(casino.sala[i].client1_socketfd);
-        shutdown(casino.sala[i].client1_socketfd,2);
+        //close(casino.sala[i].client1_socketfd);
         casino.sala[i].client1_socketfd=-1;
-        close(casino.sala[i].client1_socketfd);
-        shutdown(casino.sala[i].client2_socketfd,2);
+        
+        //close(casino.sala[i].client1_socketfd);
         casino.sala[i].client2_socketfd=-1;
+
         conexiones-=2;
         
 		exit(0);

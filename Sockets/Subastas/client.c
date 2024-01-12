@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
             break;
         default:
             printf("\nCodigo desconocido\n");
+            finExec = TRUE;
             break;
         }
     }
